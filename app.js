@@ -11,10 +11,19 @@ import encrypt from 'mongoose-encryption'
 const port =3000
 const app = express()
 console.log(process.env.API_KEY);
-async function connection(){
-    await mongoose.connect('mongodb://0.0.0.0:27017/secrets')
-    .then(()=>{console.log('DB is conect');})
-    .catch(error=> console.log(error))
+async function  connection(){
+    // await mongoose.connect('mongodb://0.0.0.0:27017/secrets')
+    // .then(()=>{console.log('DB is conect');})
+    // .catch(error=> console.log(error))
+    
+
+    try {
+        await mongoose.connect('mongodb://0.0.0.0:27017/secrets')
+        console.log('Db is conected');
+    } catch (error) {
+        console.log(error.message);
+    }
+
 }
 connection()
 app.use(express.static('public'))
@@ -56,12 +65,12 @@ app.post('/register', (req,res)=>{
     })
 })
 
-app.post('/login', (req,res)=>{
+app.post('/login', async (req,res)=>{
     const username= req.body.username
     const password= req.body.password
 
     try {
-      const user =  User.findOne({email:username})
+      const user = await User.findOne({email:username})
         if (user) {
             if (user.password=== password) {
                 res.render('secrets')
