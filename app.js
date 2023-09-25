@@ -59,15 +59,17 @@ app.post('/register', (req,res)=>{
 app.post('/login', (req,res)=>{
     const username= req.body.username
     const password= req.body.password
-    User.findOne({email:username}).then((user)=>{
+
+    try {
+      const user =  User.findOne({email:username})
         if (user) {
             if (user.password=== password) {
                 res.render('secrets')
             }
         }
-    }).catch((err)=>{
-        console.log(err.message);
-    })
+    } catch (error) {
+        console.log(error.message);
+    }
 })
 
 app.listen(port, function(){
